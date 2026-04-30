@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prototype Workflow Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            padding: 60px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 48px;
+            font-weight: 700;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 18px;
+            margin-bottom: 60px;
+        }
+
+        .flow {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .phase {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 20px;
+            padding: 32px;
+            position: relative;
+            border: 2px solid #e2e8f0;
+        }
+
+        .phase-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .phase-number {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .phase-1 .phase-number {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+        }
+
+        .phase-2 .phase-number {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
+        .phase-3 .phase-number {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .phase-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .phase-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: #667eea;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.15);
+        }
+
+        .card-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 18px;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .card-desc {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .tag {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .tag.good {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .arrow {
+            text-align: center;
+            font-size: 32px;
+            color: #cbd5e1;
+            margin: 8px 0;
+        }
+
+        .pro-tips {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid #fbbf24;
+            border-radius: 20px;
+            padding: 32px;
+            margin-top: 40px;
+        }
+
+        .pro-tips-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .pro-tips-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #78350f;
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .tip {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .tip-label {
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .tip-text {
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .example {
+            background: linear-gradient(135deg, #e0e7ff 0%, #ddd6fe 100%);
+            border: 2px solid #8b5cf6;
+            border-radius: 20px;
+            padding: 32px;
+            margin-top: 40px;
+        }
+
+        .example-header {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #5b21b6;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .example-content {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #334155;
+        }
+
+        .highlight {
+            background: #fef08a;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 32px 24px;
+            }
+
+            h1 {
+                font-size: 36px;
+            }
+
+            .phase-content {
+                grid-template-columns: 1fr;
+            }
+
+            .tips-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 32px;
+            border-top: 2px solid #e2e8f0;
+            color: #64748b;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Prototype Creation Workflow</h1>
+        <p class="subtitle">From Assets to Testable Interactive Prototype</p>
+
+        <div class="flow">
+            <!-- Phase 1 -->
+            <div class="phase phase-1">
+                <div class="phase-header">
+                    <div class="phase-number">1</div>
+                    <div class="phase-title">Asset Preparation</div>
+                </div>
+                <div class="phase-content">
+                    <div class="card">
+                        <div class="card-icon">🎨</div>
+                        <div class="card-title">Wireframes</div>
+                        <div class="card-desc">Screenshots showing interaction states and user flows</div>
+                        <div class="card-tags">
+                            <span class="tag good">PNG/JPG</span>
+                            <span class="tag good">Figma Links</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🖼️</div>
+                        <div class="card-title">UI Art Assets</div>
+                        <div class="card-desc">Buttons, icons, panels with transparency preferred</div>
+                        <div class="card-tags">
+                            <span class="tag good">PNG Alpha</span>
+                            <span class="tag">SVG OK</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">📐</div>
+                        <div class="card-title">Specifications</div>
+                        <div class="card-desc">Colors, fonts, spacing, and animation preferences</div>
+                        <div class="card-tags">
+                            <span class="tag">Optional</span>
+                            <span class="tag">Helpful</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <!-- Phase 2 -->
+            <div class="phase phase-2">
+                <div class="phase-header">
+                    <div class="phase-number">2</div>
+                    <div class="phase-title">Build Interactive Prototype</div>
+                </div>
+                <div class="phase-content">
+                    <div class="card">
+                        <div class="card-icon">⚡</div>
+                        <div class="card-title">Standalone HTML</div>
+                        <div class="card-desc">No installation needed, works immediately on web + mobile</div>
+                        <div class="card-tags">
+                            <span class="tag good">Fastest</span>
+                            <span class="tag good">Share Ready</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">⚛️</div>
+                        <div class="card-title">React Components</div>
+                        <div class="card-desc">Reusable components for complex interactions</div>
+                        <div class="card-tags">
+                            <span class="tag good">Scalable</span>
+                            <span class="tag">Advanced</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🎮</div>
+                        <div class="card-title">Canvas-Based</div>
+                        <div class="card-desc">Game-like rendering with particle effects</div>
+                        <div class="card-tags">
+                            <span class="tag">Game Feel</span>
+                            <span class="tag">Performance</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <!-- Phase 3 -->
+            <div class="phase phase-3">
+                <div class="phase-header">
+                    <div class="phase-number">3</div>
+                    <div class="phase-title">Test & Iterate with Live Controls</div>
+                </div>
+                <div class="phase-content">
+                    <div class="card">
+                        <div class="card-icon">🎛️</div>
+                        <div class="card-title">Position Sliders</div>
+                        <div class="card-desc">Adjust X/Y positioning in real-time without code changes</div>
+                        <div class="card-tags">
+                            <span class="tag good">Live Tuning</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">⏱️</div>
+                        <div class="card-title">Animation Controls</div>
+                        <div class="card-desc">Fine-tune timing, easing, and transition speeds</div>
+                        <div class="card-tags">
+                            <span class="tag good">Feel Testing</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">📱</div>
+                        <div class="card-title">Mobile Testing</div>
+                        <div class="card-desc">Test on actual devices via local server or GitHub Pages</div>
+                        <div class="card-tags">
+                            <span class="tag good">Real Device</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="pro-tips">
+            <div class="pro-tips-header">
+                <span style="font-size: 32px;">💡</span>
+                <div class="pro-tips-title">Pro Tips for Best Results</div>
+            </div>
+            <div class="tips-grid">
+                <div class="tip">
+                    <div class="tip-label">✅ Show Multiple States</div>
+                    <div class="tip-text">Idle, pressed, disabled - helps recreate exact behavior</div>
+                </div>
+                <div class="tip">
+                    <div class="tip-label">✅ Explain the Feeling</div>
+                    <div class="tip-text">"Snappy" vs "Weighty" - describes interaction intent</div>
+                </div>
+                <div class="tip">
+                    <div class="tip-label">✅ Use References</div>
+                    <div class="tip-text">"Like Clash Royale's menu" - speeds up understanding</div>
+                </div>
+                <div class="tip">
+                    <div class="tip-label">✅ Focus on Key Interactions</div>
+                    <div class="tip-text">Start with 1-2 critical flows, expand later</div>
+                </div>
+                <div class="tip">
+                    <div class="tip-label">❌ Don't Send Everything</div>
+                    <div class="tip-text">50 screens at once = overwhelm. Iterate step by step</div>
+                </div>
+                <div class="tip">
+                    <div class="tip-label">❌ Don't Assume Context</div>
+                    <div class="tip-text">Explain game-specific terms and interactions clearly</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Example Request -->
+        <div class="example">
+            <div class="example-header">
+                <span style="font-size: 28px;">✨</span>
+                Perfect Request Example
+            </div>
+            <div class="example-content">
+                "I'm designing a <span class="highlight">mobile RPG inventory system</span>.<br><br>
+
+                <strong>Assets:</strong> [uploads 3 wireframe images]<br>
+                • 01_inventory_closed.png<br>
+                • 02_inventory_open.png<br>
+                • 03_item_selected.png<br><br>
+
+                <strong>UI Art:</strong> In /assets folder<br>
+                • panel_bg.png<br>
+                • button_close.png<br>
+                • item_icons/ (10 icons)<br><br>
+
+                <strong>Interaction to test:</strong><br>
+                1. Tap inventory button → <span class="highlight">panel slides up</span> from bottom<br>
+                2. Tap item → detail panel <span class="highlight">expands from item</span><br>
+                3. Tap outside → everything dismisses<br><br>
+
+                <strong>Focus:</strong> Slide-up animation needs to <span class="highlight">feel smooth on mobile</span><br>
+                Can you add <span class="highlight">timing controls</span> so I can tune it?<br><br>
+
+                <strong>Style:</strong> Fantasy theme, gold/purple colors<br>
+                Mobile-first, portrait orientation"
+            </div>
+        </div>
+
+        <div class="footer">
+            <strong>Result:</strong> Working prototype delivered in ~5 minutes, ready to test on any device<br>
+            <em>Created with Claude • Mobile Game UX Prototyping Workflow</em>
+        </div>
+    </div>
+</body>
+</html>
