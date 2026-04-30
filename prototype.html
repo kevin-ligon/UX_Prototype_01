@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Strategy Map - Contextual Menu Prototype</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/framer-motion@10/dist/framer-motion.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+            overflow: hidden;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .title-font {
+            font-family: 'Cinzel', serif;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(212, 175, 55, 0.8);
+            }
+        }
+
+        .pulse-glow {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { motion, AnimatePresence } = Motion;
+
+        // Building Icon Component
+        const BuildingIcon = ({ type, level }) => {
+            const icons = {
+                barracks: (
+                    <svg viewBox="0 0 100 100" className="w-full h-full">
+                        <rect x="20" y="45" width="60" height="40" fill="#8B4513" stroke="#D4AF37" strokeWidth="2"/>
+                        <polygon points="50,25 80,45 20,45" fill="#6B1F1F" stroke="#D4AF37" strokeWidth="2"/>
+                        <rect x="35" y="60" width="12" height="25" fill="#4B4B4B"/>
+                        <rect x="53" y="60" width="12" height="25" fill="#4B4B4B"/>
+                        <circle cx="90" cy="30" r="8" fill="#D4AF37"/>
+                        <text x="90" y="34" fontSize="10" fill="#1a1a2e" textAnchor="middle" fontWeight="bold">{level}</text>
+                    </svg>
+                ),
+                tower: (
+                    <svg viewBox="0 0 100 100" className="w-full h-full">
+                        <rect x="35" y="30" width="30" height="60" fill="#696969" stroke="#D4AF37" strokeWidth="2"/>
+                        <polygon points="50,10 65,30 35,30" fill="#DC143C" stroke="#D4AF37" strokeWidth="2"/>
+                        <rect x="40" y="45" width="20" height="8" fill="#4B4B4B"/>
+                        <rect x="40" y="65" width="20" height="8" fill="#4B4B4B"/>
+                        <circle cx="90" cy="25" r="8" fill="#D4AF37"/>
+                        <text x="90" y="29" fontSize="10" fill="#1a1a2e" textAnchor="middle" fontWeight="bold">{level}</text>
+                    </svg>
+                ),
+                castle: (
+                    <svg viewBox="0 0 100 100" className="w-full h-full">
+                        <rect x="30" y="40" width="40" height="50" fill="#8B4513" stroke="#D4AF37" strokeWidth="2"/>
+                        <rect x="20" y="20" width="60" height="30" fill="#654321" stroke="#D4AF37" strokeWidth="2"/>
+                        <rect x="15" y="15" width="10" height="15" fill="#654321" stroke="#D4AF37" strokeWidth="1"/>
+                        <rect x="75" y="15" width="10" height="15" fill="#654321" stroke="#D4AF37" strokeWidth="1"/>
+                        <circle cx="90" cy="20" r="8" fill="#D4AF37"/>
+                        <text x="90" y="24" fontSize="10" fill="#1a1a2e" textAnchor="middle" fontWeight="bold">{level}</text>
+                    </svg>
+                ),
+                village: (
+                    <svg viewBox="0 0 100 100" className="w-full h-full">
+                        <rect x="30" y="50" width="40" height="35" fill="#8B4513" stroke="#D4AF37" strokeWidth="2"/>
+                        <polygon points="50,30 70,50 30,50" fill="#CD853F" stroke="#D4AF37" strokeWidth="2"/>
+                        <rect x="42" y="60" width="16" height="25" fill="#654321"/>
+                        <circle cx="90" cy="35" r="8" fill="#D4AF37"/>
+                        <text x="90" y="39" fontSize="10" fill="#1a1a2e" textAnchor="middle" fontWeight="bold">{level}</text>
+                    </svg>
+                )
+            };
+
+            return icons[type] || icons.barracks;
+        };
+
+        // Contextual Menu Component
+        const ContextualMenu = ({ building, onClose, position }) => {
+            if (!building) return null;
+
+            return (
+                <AnimatePresence>
+                    <motion.div
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                        className="absolute z-50"
+                        style={{
+                            left: position.x,
+                            top: position.y,
+                            transform: 'translate(-50%, -120%)'
+                        }}
+                    >
+                        {/* Floating Label */}
+                        <motion.div
+                            initial={{ y: 10, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.1 }}
+                            className="absolute -top-14 left-1/2 -translate-x-1/2 whitespace-nowrap"
+                        >
+                            <div className="bg-gradient-to-r from-purple-900/95 to-purple-800/95 px-4 py-2 rounded-lg border-2 border-yellow-500/70 shadow-lg">
+                                <p className="text-yellow-400 font-bold text-sm title-font">
+                                    Lv {building.level} {building.name}
+                                </p>
+                            </div>
+                        </motion.div>
+
+                        {/* Circular Buttons */}
+                        <div className="flex gap-4 items-center justify-center">
+                            <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.95 }}
+                                initial={{ scale: 0, rotate: -180 }}
+                                animate={{ scale: 1, rotate: 0 }}
+                                transition={{ delay: 0.15, type: "spring" }}
+                                className="group relative"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    console.log('Upgrade clicked');
+                                }}
+                            >
+                                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-yellow-600 to-yellow-800 flex items-center justify-center border-3 border-yellow-400 shadow-lg hover:shadow-yellow-500/50 transition-shadow">
+                                    <span className="text-2xl">⬆️</span>
+                                </div>
+                                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <p className="text-xs text-yellow-300 font-semibold whitespace-nowrap">Upgrade</p>
+                                </div>
+                            </motion.button>
+
+                            <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.95 }}
+                                initial={{ scale: 0, rotate: 180 }}
+                                animate={{ scale: 1, rotate: 0 }}
+                                transition={{ delay: 0.2, type: "spring" }}
+                                className="group relative"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    console.log('Recruit clicked');
+                                }}
+                            >
+                                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-red-700 to-red-900 flex items-center justify-center border-3 border-yellow-400 shadow-lg hover:shadow-red-500/50 transition-shadow">
+                                    <span className="text-2xl">⚔️</span>
+                                </div>
+                                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <p className="text-xs text-yellow-300 font-semibold whitespace-nowrap">Recruit</p>
+                                </div>
+                            </motion.button>
+                        </div>
+
+                        {/* Connector Line */}
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 w-1 h-8 bg-gradient-to-b from-yellow-500/70 to-transparent"></div>
+                    </motion.div>
+                </AnimatePresence>
+            );
+        };
+
+        // Building Component
+        const Building = ({ id, type, name, level, position, isActive, onClick }) => {
+            return (
+                <motion.div
+                    className="absolute cursor-pointer"
+                    style={{
+                        left: position.x,
+                        top: position.y,
+                        width: 80,
+                        height: 80,
+                        transform: 'translate(-50%, -50%)'
+                    }}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{
+                        scale: 0.95,
+                    }}
+                    animate={isActive ? {
+                        scale: [1, 1.15, 1],
+                        transition: { duration: 0.4 }
+                    } : {}}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onClick(id);
+
+                        // Haptic feedback
+                        if (window.navigator.vibrate) {
+                            window.navigator.vibrate(10);
+                        }
+                    }}
+                >
+                    {/* Glow effect when active */}
+                    {isActive && (
+                        <motion.div
+                            className="absolute inset-0 rounded-full blur-xl bg-yellow-500/30"
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1.2, opacity: 1 }}
+                            transition={{ duration: 0.3 }}
+                        />
+                    )}
+
+                    {/* Building Icon */}
+                    <motion.div
+                        className={`relative w-full h-full ${isActive ? 'pulse-glow' : ''}`}
+                        style={{
+                            filter: isActive ? 'drop-shadow(0 0 15px rgba(212, 175, 55, 0.8))' : 'drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5))'
+                        }}
+                    >
+                        <BuildingIcon type={type} level={level} />
+                    </motion.div>
+
+                    {/* Tap indicator */}
+                    {isActive && (
+                        <motion.div
+                            className="absolute inset-0 rounded-full border-4 border-yellow-400"
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{
+                                scale: [0.8, 1.3, 1.5],
+                                opacity: [0.8, 0.4, 0]
+                            }}
+                            transition={{ duration: 0.6 }}
+                        />
+                    )}
+                </motion.div>
+            );
+        };
+
+        // Main App Component
+        const App = () => {
+            const [selectedBuilding, setSelectedBuilding] = useState(null);
+            const [buildings] = useState([
+                { id: 1, type: 'barracks', name: 'Melee Barracks', level: 3, position: { x: 300, y: 250 } },
+                { id: 2, type: 'tower', name: 'Archer Tower', level: 5, position: { x: 500, y: 200 } },
+                { id: 3, type: 'castle', name: 'Castle', level: 7, position: { x: 650, y: 300 } },
+                { id: 4, type: 'village', name: 'Village', level: 2, position: { x: 400, y: 380 } }
+            ]);
+
+            const handleBuildingClick = (buildingId) => {
+                const building = buildings.find(b => b.id === buildingId);
+                setSelectedBuilding(building);
+            };
+
+            const handleMapClick = () => {
+                setSelectedBuilding(null);
+            };
+
+            const selectedBuildingData = selectedBuilding;
+
+            return (
+                <div
+                    className="relative w-screen h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900"
+                    onClick={handleMapClick}
+                >
+                    {/* Top Bar */}
+                    <div className="absolute top-0 left-0 right-0 h-16 bg-black/40 backdrop-blur-md border-b border-yellow-600/30 flex items-center justify-between px-6 z-40">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-500 to-yellow-700 border-2 border-yellow-400"></div>
+                            <span className="text-yellow-100 font-semibold">MyLordship</span>
+                        </div>
+                        <div className="flex gap-4">
+                            <div className="px-3 py-1 bg-purple-900/50 rounded-lg border border-purple-500/30 text-yellow-100 text-sm">⚔️ 1.5k</div>
+                            <div className="px-3 py-1 bg-purple-900/50 rounded-lg border border-purple-500/30 text-yellow-100 text-sm">🏰 1.5k</div>
+                            <div className="px-3 py-1 bg-purple-900/50 rounded-lg border border-purple-500/30 text-yellow-100 text-sm">⭐ 1.5k</div>
+                        </div>
+                    </div>
+
+                    {/* Side Menus */}
+                    <div className="absolute left-4 top-24 flex flex-col gap-3 z-40">
+                        <button className="px-4 py-3 bg-purple-900/60 backdrop-blur-sm rounded-lg border-2 border-purple-500/40 text-yellow-100 text-sm font-semibold hover:bg-purple-800/60 transition-colors">
+                            Missions<br/>Board
+                        </button>
+                        <button className="px-4 py-3 bg-purple-900/60 backdrop-blur-sm rounded-lg border-2 border-purple-500/40 text-yellow-100 text-sm font-semibold hover:bg-purple-800/60 transition-colors">
+                            Clues<br/>Board
+                        </button>
+                    </div>
+
+                    <div className="absolute right-4 top-24 flex flex-col gap-3 z-40">
+                        <button className="w-14 h-14 bg-purple-900/60 backdrop-blur-sm rounded-full border-2 border-purple-500/40 text-2xl hover:bg-purple-800/60 transition-colors">🔥</button>
+                        <button className="w-14 h-14 bg-purple-900/60 backdrop-blur-sm rounded-full border-2 border-purple-500/40 text-2xl hover:bg-purple-800/60 transition-colors">⚔️</button>
+                        <button className="w-14 h-14 bg-purple-900/60 backdrop-blur-sm rounded-full border-2 border-purple-500/40 text-2xl hover:bg-purple-800/60 transition-colors">🎯</button>
+                    </div>
+
+                    {/* Map Container */}
+                    <div className="absolute inset-0 top-16">
+                        {/* Dimming Overlay */}
+                        <AnimatePresence>
+                            {selectedBuilding && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    className="absolute inset-0 bg-black/50 backdrop-blur-sm z-30"
+                                    onClick={handleMapClick}
+                                />
+                            )}
+                        </AnimatePresence>
+
+                        {/* Territory Map Background */}
+                        <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 800 600" preserveAspectRatio="none">
+                            <path className="fill-green-700/40" d="M 50,50 Q 150,80 200,150 L 200,500 Q 180,550 100,580 L 50,550 Z" />
+                            <path className="fill-red-700/40" d="M 400,50 L 750,50 L 750,550 Q 700,580 600,550 L 450,500 Q 400,300 400,100 Z" />
+                            <path className="fill-gray-600/40" d="M 200,150 Q 250,180 300,220 L 400,350 L 450,500 L 350,550 Q 250,520 200,500 Z" />
+                        </svg>
+
+                        {/* Buildings */}
+                        <div className="relative w-full h-full z-40">
+                            {buildings.map(building => (
+                                <Building
+                                    key={building.id}
+                                    {...building}
+                                    isActive={selectedBuilding?.id === building.id}
+                                    onClick={handleBuildingClick}
+                                />
+                            ))}
+
+                            {/* Contextual Menu */}
+                            {selectedBuildingData && (
+                                <ContextualMenu
+                                    building={selectedBuildingData}
+                                    position={selectedBuildingData.position}
+                                    onClose={handleMapClick}
+                                />
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
