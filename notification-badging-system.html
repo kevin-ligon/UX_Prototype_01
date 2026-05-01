@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile RPG Notification Badging System - UX Flow</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e1e2e 0%, #2a2a3e 100%);
+            color: #e0e0e0;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #252538;
+            border-radius: 24px;
+            padding: 60px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 18px;
+            margin-bottom: 50px;
+        }
+
+        .section {
+            margin-bottom: 60px;
+        }
+
+        h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 36px;
+            color: #FFD700;
+            margin-bottom: 24px;
+            border-left: 4px solid #FFD700;
+            padding-left: 16px;
+        }
+
+        h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 24px;
+            color: #FFA500;
+            margin: 32px 0 16px 0;
+        }
+
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin: 32px 0;
+        }
+
+        .badge-card {
+            background: linear-gradient(135deg, #2d2d42 0%, #383850 100%);
+            border-radius: 16px;
+            padding: 32px;
+            border: 2px solid #3a3a52;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .badge-card:hover {
+            border-color: #FFD700;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(255, 215, 0, 0.2);
+        }
+
+        .badge-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .badge-card.red-dot::before { background: #EF4444; }
+        .badge-card.green-arrow::before { background: #10B981; }
+        .badge-card.new-badge::before { background: #3B82F6; }
+        .badge-card.number-badge::before { background: #8B5CF6; }
+        .badge-card.exclamation::before { background: #F59E0B; }
+
+        .badge-visual {
+            width: 100%;
+            height: 200px;
+            background: #1e1e2e;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            position: relative;
+            border: 2px solid #3a3a52;
+        }
+
+        .mock-button {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #4a4a6a 0%, #5a5a7a 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .red-dot-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 16px;
+            height: 16px;
+            background: #EF4444;
+            border-radius: 50%;
+            border: 2px solid #1e1e2e;
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
+            animation: pulse-red 2s infinite;
+        }
+
+        @keyframes pulse-red {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .green-arrow-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 32px;
+            height: 32px;
+            background: #10B981;
+            border-radius: 50%;
+            border: 3px solid #1e1e2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 0 16px rgba(16, 185, 129, 0.6);
+            animation: bounce-arrow 1s infinite;
+        }
+
+        @keyframes bounce-arrow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        .new-badge-label {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            animation: shine 2s infinite;
+        }
+
+        @keyframes shine {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .number-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            min-width: 24px;
+            height: 24px;
+            background: #8B5CF6;
+            border-radius: 12px;
+            border: 2px solid #1e1e2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            padding: 0 6px;
+            box-shadow: 0 0 16px rgba(139, 92, 246, 0.6);
+        }
+
+        .exclamation-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 28px;
+            height: 28px;
+            background: #F59E0B;
+            border-radius: 50%;
+            border: 2px solid #1e1e2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 0 16px rgba(245, 158, 11, 0.6);
+            animation: pulse-warning 1.5s infinite;
+        }
+
+        @keyframes pulse-warning {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+        }
+
+        .badge-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #FFD700;
+        }
+
+        .badge-when {
+            background: rgba(255, 215, 0, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 12px 0;
+            border-left: 3px solid #FFD700;
+        }
+
+        .badge-when strong {
+            color: #FFD700;
+        }
+
+        .badge-list {
+            list-style: none;
+            margin: 16px 0;
+        }
+
+        .badge-list li {
+            padding: 8px 0 8px 24px;
+            position: relative;
+            color: #d1d5db;
+        }
+
+        .badge-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #FFD700;
+            font-weight: bold;
+        }
+
+        .flow-diagram {
+            background: #1e1e2e;
+            border-radius: 16px;
+            padding: 40px;
+            margin: 32px 0;
+            border: 2px solid #3a3a52;
+        }
+
+        .flow-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 24px 0;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .flow-box {
+            background: linear-gradient(135deg, #2d2d42 0%, #383850 100%);
+            padding: 20px 24px;
+            border-radius: 12px;
+            border: 2px solid #4a4a62;
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .flow-arrow {
+            font-size: 24px;
+            color: #FFD700;
+            font-weight: bold;
+        }
+
+        .best-practices {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+            border: 2px solid #10B981;
+            border-radius: 16px;
+            padding: 32px;
+            margin: 32px 0;
+        }
+
+        .best-practices h3 {
+            color: #10B981;
+            margin-top: 0;
+        }
+
+        .anti-patterns {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+            border: 2px solid #EF4444;
+            border-radius: 16px;
+            padding: 32px;
+            margin: 32px 0;
+        }
+
+        .anti-patterns h3 {
+            color: #EF4444;
+            margin-top: 0;
+        }
+
+        .game-reference {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.2);
+            color: #60A5FA;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin: 4px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .priority-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+            background: #2d2d42;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .priority-table th {
+            background: #1e1e2e;
+            padding: 16px;
+            text-align: left;
+            color: #FFD700;
+            font-weight: 700;
+        }
+
+        .priority-table td {
+            padding: 16px;
+            border-top: 1px solid #3a3a52;
+        }
+
+        .priority-table tr:hover {
+            background: #383850;
+        }
+
+        .priority-high { color: #EF4444; font-weight: 700; }
+        .priority-medium { color: #F59E0B; font-weight: 600; }
+        .priority-low { color: #10B981; }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 32px 24px;
+            }
+
+            h1 {
+                font-size: 36px;
+            }
+
+            .badge-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-row {
+                flex-direction: column;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mobile RPG Notification Badging System</h1>
+        <p class="subtitle">UX Flow for Hero Collector Games | Designed to Minimize Player Fatigue</p>
+
+        <!-- Section: Badge Types -->
+        <div class="section">
+            <h2>Core Badge Types</h2>
+            <p>Five primary badge types, each serving a specific purpose to guide player attention without overwhelming them.</p>
+
+            <div class="badge-grid">
+                <!-- Red Dot -->
+                <div class="badge-card red-dot">
+                    <div class="badge-visual">
+                        <div class="mock-button">
+                            🎁
+                            <div class="red-dot-badge"></div>
+                        </div>
+                    </div>
+                    <div class="badge-title">Red Dot (Notification)</div>
+                    <div class="badge-when">
+                        <strong>When to Show:</strong> Something requires player attention
+                    </div>
+                    <ul class="badge-list">
+                        <li>Unclaimed rewards ready to collect</li>
+                        <li>Daily login bonus available</li>
+                        <li>Free chest timer completed</li>
+                        <li>Energy/stamina fully regenerated</li>
+                        <li>Guild message or mail received</li>
+                    </ul>
+                    <p style="margin-top: 16px; font-size: 14px; color: #9ca3af;">
+                        <span class="game-reference">Clash Royale</span>
+                        <span class="game-reference">Marvel Strike Force</span>
+                    </p>
+                </div>
+
+                <!-- Green Arrow -->
+                <div class="badge-card green-arrow">
+                    <div class="badge-visual">
+                        <div class="mock-button">
+                            ⚔️
+                            <div class="green-arrow-badge">↑</div>
+                        </div>
+                    </div>
+                    <div class="badge-title">Green Arrow (Upgrade Available)</div>
+                    <div class="badge-when">
+                        <strong>When to Show:</strong> Player can improve something NOW
+                    </div>
+                    <ul class="badge-list">
+                        <li>Hero ready to level up (has materials + currency)</li>
+                        <li>Skill upgrade available</li>
+                        <li>Building upgrade can start</li>
+                        <li>Gear can be enhanced</li>
+                        <li>Character ready for rank-up</li>
+                    </ul>
+                    <p style="margin-top: 16px; font-size: 14px; color: #9ca3af;">
+                        <span class="game-reference">Eternal Evolution</span>
+                        <span class="game-reference">Clash of Clans</span>
+                    </p>
+                </div>
+
+                <!-- New Badge -->
+                <div class="badge-card new-badge">
+                    <div class="badge-visual">
+                        <div class="mock-button">
+                            🎯
+                            <div class="new-badge-label">NEW</div>
+                        </div>
+                    </div>
+                    <div class="badge-title">New Badge (Fresh Content)</div>
+                    <div class="badge-when">
+                        <strong>When to Show:</strong> Recently unlocked or never visited
+                    </div>
+                    <ul class="badge-list">
+                        <li>Newly unlocked feature/mode</li>
+                        <li>Limited-time event just started</li>
+                        <li>New hero acquired (first 24 hours)</li>
+                        <li>Updated shop inventory</li>
+                        <li>First-time tutorial trigger</li>
+                    </ul>
+                    <p style="margin-top: 16px; font-size: 14px; color: #9ca3af;">
+                        <span class="game-reference">Whiteout Survival</span>
+                        <span class="game-reference">Marvel Strike Force</span>
+                    </p>
+                </div>
+
+                <!-- Number Badge -->
+                <div class="badge-card number-badge">
+                    <div class="badge-visual">
+                        <div class="mock-button">
+                            📬
+                            <div class="number-badge">12</div>
+                        </div>
+                    </div>
+                    <div class="badge-title">Number Badge (Quantity Count)</div>
+                    <div class="badge-when">
+                        <strong>When to Show:</strong> Multiple items need attention
+                    </div>
+                    <ul class="badge-list">
+                        <li>Unread messages/mail count</li>
+                        <li>Number of claimable quest rewards</li>
+                        <li>Heroes ready to upgrade</li>
+                        <li>Available alliance help requests</li>
+                        <li>Pending friend requests</li>
+                    </ul>
+                    <p style="margin-top: 16px; font-size: 14px; color: #9ca3af;">
+                        <span class="game-reference">Clash Royale</span>
+                        <span class="game-reference">All Games</span>
+                    </p>
+                </div>
+
+                <!-- Exclamation -->
+                <div class="badge-card exclamation">
+                    <div class="badge-visual">
+                        <div class="mock-button">
+                            ⏰
+                            <div class="exclamation-badge">!</div>
+                        </div>
+                    </div>
+                    <div class="badge-title">Exclamation (Urgent/Expiring)</div>
+                    <div class="badge-when">
+                        <strong>When to Show:</strong> Time-sensitive action required
+                    </div>
+                    <ul class="badge-list">
+                        <li>Event ending in < 24 hours</li>
+                        <li>Limited offer expiring soon</li>
+                        <li>Energy about to overflow/cap</li>
+                        <li>War/raid phase ending</li>
+                        <li>Daily quest reset imminent</li>
+                    </ul>
+                    <p style="margin-top: 16px; font-size: 14px; color: #9ca3af;">
+                        <span class="game-reference">Eternal Evolution</span>
+                        <span class="game-reference">Whiteout Survival</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Decision Flow -->
+        <div class="section">
+            <h2>Badge Selection Decision Flow</h2>
+            <div class="flow-diagram">
+                <div class="flow-row">
+                    <div class="flow-box">
+                        <strong>Player Action Available?</strong>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-box">
+                        <strong>Is it urgent/expiring?</strong><br>
+                        <span style="color: #F59E0B;">YES → ! Exclamation</span><br>
+                        <span style="color: #9ca3af;">NO → Continue</span>
+                    </div>
+                </div>
+                <div class="flow-row">
+                    <div class="flow-box">
+                        <strong>Can they upgrade NOW?</strong><br>
+                        <span style="color: #10B981;">YES → ↑ Green Arrow</span><br>
+                        <span style="color: #9ca3af;">NO → Continue</span>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-box">
+                        <strong>Multiple items waiting?</strong><br>
+                        <span style="color: #8B5CF6;">YES → # Number Badge</span><br>
+                        <span style="color: #9ca3af;">NO → Continue</span>
+                    </div>
+                </div>
+                <div class="flow-row">
+                    <div class="flow-box">
+                        <strong>Is it brand new content?</strong><br>
+                        <span style="color: #3B82F6;">YES → "NEW" Badge</span><br>
+                        <span style="color: #9ca3af;">NO → Continue</span>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-box">
+                        <strong>Default notification</strong><br>
+                        <span style="color: #EF4444;">● Red Dot</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Priority System -->
+        <div class="section">
+            <h2>Badge Priority & Hierarchy</h2>
+            <p>When multiple badges could apply, show only the highest priority. Never stack multiple badges on one button.</p>
+
+            <table class="priority-table">
+                <thead>
+                    <tr>
+                        <th>Priority</th>
+                        <th>Badge Type</th>
+                        <th>Reason</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="priority-high">1. Highest</td>
+                        <td>! Exclamation</td>
+                        <td>Time-sensitive, potential loss</td>
+                        <td>Event ends in 3 hours</td>
+                    </tr>
+                    <tr>
+                        <td class="priority-high">2. High</td>
+                        <td>↑ Green Arrow</td>
+                        <td>Immediate progression available</td>
+                        <td>Hero can level up now</td>
+                    </tr>
+                    <tr>
+                        <td class="priority-medium">3. Medium</td>
+                        <td># Number Badge</td>
+                        <td>Multiple actions waiting</td>
+                        <td>5 quests ready to claim</td>
+                    </tr>
+                    <tr>
+                        <td class="priority-medium">4. Medium</td>
+                        <td>"NEW" Badge</td>
+                        <td>Fresh content to explore</td>
+                        <td>New event unlocked</td>
+                    </tr>
+                    <tr>
+                        <td class="priority-low">5. Lowest</td>
+                        <td>● Red Dot</td>
+                        <td>General notification</td>
+                        <td>Daily reward available</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section: Best Practices -->
+        <div class="section">
+            <div class="best-practices">
+                <h3>✅ Best Practices (Anti-Fatigue Design)</h3>
+                <ul class="badge-list">
+                    <li><strong>Auto-Clear When Action Completed:</strong> Badge disappears instantly when player claims/upgrades (Clash Royale pattern)</li>
+                    <li><strong>NEW Badge Timeout:</strong> Automatically remove "NEW" after 24-48 hours or first visit (Marvel Strike Force)</li>
+                    <li><strong>One Badge Per Button:</strong> Never stack multiple indicators - show highest priority only</li>
+                    <li><strong>Meaningful Numbers Only:</strong> Show count (12) only when >1. Use red dot for single items</li>
+                    <li><strong>Contextual Urgency:</strong> Only use ! exclamation for genuine time pressure (<24hrs to expiry)</li>
+                    <li><strong>Tutorial Exception:</strong> Suppress all badges during tutorial/onboarding to avoid overwhelm</li>
+                    <li><strong>Smart Grouping:</strong> Combine similar notifications (3 heroes ready = 1 badge on Heroes screen)</li>
+                    <li><strong>User Control:</strong> Allow dismissal of "NEW" badges manually (long-press to clear)</li>
+                    <li><strong>Session Limit:</strong> Cap total active badges at 5-7 across entire UI to prevent Christmas tree effect</li>
+                    <li><strong>No False Urgency:</strong> Don't abuse ! exclamation for non-expiring shop offers (Whiteout Survival does this well)</li>
+                </ul>
+            </div>
+
+            <div class="anti-patterns">
+                <h3>❌ Anti-Patterns (Causes Fatigue)</h3>
+                <ul class="badge-list">
+                    <li><strong>Permanent Badges:</strong> Never show badges that never clear (creates learned helplessness)</li>
+                    <li><strong>Over-Notification:</strong> Badge on every screen/button even for minor actions</li>
+                    <li><strong>Fake Urgency:</strong> ! exclamation on permanent shop items or non-expiring content</li>
+                    <li><strong>Badge Spam:</strong> Same notification shown in 3+ places simultaneously</li>
+                    <li><strong>No Hierarchy:</strong> All notifications look equally important (everything urgent = nothing urgent)</li>
+                    <li><strong>Hidden Dependencies:</strong> Badge shows but action impossible due to hidden requirement</li>
+                    <li><strong>Inconsistent Logic:</strong> Badge appears/disappears randomly without clear trigger</li>
+                    <li><strong>Tutorial Overload:</strong> Showing 10+ badges to new player immediately</li>
+                    <li><strong>Clickbait Badges:</strong> Badge leads to empty/already-cleared screen</li>
+                    <li><strong>No Feedback:</strong> Badge persists even after player completes the action</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section: Context Examples -->
+        <div class="section">
+            <h2>Contextual Badge Application</h2>
+
+            <h3>🏠 Main Hub Screen</h3>
+            <ul class="badge-list">
+                <li><strong>Heroes Button:</strong> ↑ Green arrow if 1+ heroes can upgrade with current resources</li>
+                <li><strong>Quests Button:</strong> # Number showing claimable rewards (e.g., "3")</li>
+                <li><strong>Shop Button:</strong> "NEW" for first 24h after shop refresh, then ● red dot if items available</li>
+                <li><strong>Events Button:</strong> ! Exclamation if main event ends in <24h, else "NEW" for first 48h</li>
+                <li><strong>Mail Button:</strong> # Number for unread count, max display "99+"</li>
+                <li><strong>Guild Button:</strong> ● Red dot for new messages/requests (no number to avoid spam)</li>
+            </ul>
+
+            <h3>⚔️ Heroes Screen</h3>
+            <ul class="badge-list">
+                <li><strong>Individual Hero Portrait:</strong> ↑ Green arrow only if that specific hero can level/rank up NOW</li>
+                <li><strong>Filter Tabs (All/Tank/DPS):</strong> # Number showing upgradeable heroes in that category</li>
+                <li><strong>New Hero (first 24h):</strong> "NEW" badge, then clear automatically</li>
+                <li><strong>Awakening Tab:</strong> ! Exclamation if awakening materials expire soon, else ↑ green if ready</li>
+            </ul>
+
+            <h3>🎁 Daily Rewards</h3>
+            <ul class="badge-list">
+                <li><strong>Login Calendar:</strong> ● Red dot when claimable, disappears after claim</li>
+                <li><strong>Free Chest:</strong> ● Red dot when timer complete (not before)</li>
+                <li><strong>Video Rewards:</strong> # Number showing available watch count (e.g., "3/5")</li>
+                <li><strong>Pass/Battlepass:</strong> # Number for all unclaimed tier rewards combined</li>
+            </ul>
+
+            <h3>💰 Shop/Store</h3>
+            <ul class="badge-list">
+                <li><strong>Daily Deals:</strong> "NEW" for first 2 hours after refresh, then nothing</li>
+                <li><strong>Flash Sale:</strong> ! Exclamation only if <4 hours remaining</li>
+                <li><strong>Event Shop:</strong> "NEW" when event launches, ● red dot if currency available to spend</li>
+                <li><strong>Regular Shop:</strong> No badge (opt-in browsing, not push notification)</li>
+            </ul>
+
+            <h3>⚡ Energy/Stamina System</h3>
+            <ul class="badge-list">
+                <li><strong>Campaign Button:</strong> No badge normally (even at full energy - Clash Royale pattern)</li>
+                <li><strong>Campaign Button (capped):</strong> ! Exclamation only if energy 100% full for >30min</li>
+                <li><strong>Campaign Button (new content):</strong> "NEW" badge for new chapter unlock, 48h timeout</li>
+            </ul>
+        </div>
+
+        <!-- Section: Timing Rules -->
+        <div class="section">
+            <h2>Badge Timing & Lifecycle</h2>
+
+            <h3>Appearance Triggers</h3>
+            <ul class="badge-list">
+                <li><strong>Instant:</strong> Reward becomes claimable, quest completes, timer finishes</li>
+                <li><strong>Session Start:</strong> Check for new mail, event updates, daily reset items</li>
+                <li><strong>Real-Time:</strong> Guild messages, PvP attack notifications (push notifications)</li>
+                <li><strong>After Action:</strong> Hero levels up → show upgrade badge on Heroes screen</li>
+            </ul>
+
+            <h3>Disappearance Rules</h3>
+            <ul class="badge-list">
+                <li><strong>Immediate:</strong> Player completes the action (claim/upgrade/view)</li>
+                <li><strong>24-Hour Auto-Clear:</strong> "NEW" badges on repeating content (daily shop)</li>
+                <li><strong>48-Hour Auto-Clear:</strong> "NEW" badges on permanent unlocks (new feature/mode)</li>
+                <li><strong>Manual Dismiss:</strong> Allow long-press to clear "NEW" if player wants</li>
+                <li><strong>Conditional Clear:</strong> Green ↑ disappears when resources spent elsewhere</li>
+            </ul>
+
+            <h3>Update Frequency</h3>
+            <ul class="badge-list">
+                <li><strong>Real-Time:</strong> Red dots, upgrade arrows (check after every action)</li>
+                <li><strong>Every 5 Minutes:</strong> Energy caps, timer completions (background check)</li>
+                <li><strong>Session Check:</strong> "NEW" badges, mail counts (on app open)</li>
+                <li><strong>Daily Reset:</strong> Shop refresh, daily quest badges (4am UTC typical)</li>
+            </ul>
+        </div>
+
+        <!-- Section: Platform Differences -->
+        <div class="section">
+            <h2>Platform-Specific Considerations</h2>
+
+            <h3>iOS vs Android</h3>
+            <ul class="badge-list">
+                <li><strong>iOS App Icon Badge:</strong> Mirror most urgent in-game badge number (mail/quests)</li>
+                <li><strong>Android Home Widget:</strong> Show daily reset timer + most important action</li>
+                <li><strong>Push Notifications:</strong> Only for time-sensitive (energy full, event ending, PvP attack)</li>
+                <li><strong>Badge Numbering:</strong> iOS convention = show count, Android = red dot more common</li>
+            </ul>
+
+            <h3>Accessibility</h3>
+            <ul class="badge-list">
+                <li><strong>Color-Blind Mode:</strong> Add symbols to badges (! ↑ # NEW) not just colors</li>
+                <li><strong>Screen Readers:</strong> Badge announcements like "Upgrade available" not just "badge"</li>
+                <li><strong>Reduced Motion:</strong> Static badges, no pulse/bounce animations</li>
+                <li><strong>High Contrast:</strong> Border around badges for visibility</li>
+            </ul>
+        </div>
+
+        <!-- Section: Summary -->
+        <div class="section">
+            <h2>Summary: 5 Core Principles</h2>
+            <div class="best-practices" style="border-color: #FFD700;">
+                <h3 style="color: #FFD700;">🎯 Golden Rules for Badge UX</h3>
+                <ol class="badge-list" style="padding-left: 24px;">
+                    <li style="padding-left: 12px;"><strong>Meaningful Only:</strong> Every badge must represent a real, completable action</li>
+                    <li style="padding-left: 12px;"><strong>Clear Hierarchy:</strong> One badge type per button, prioritized by urgency</li>
+                    <li style="padding-left: 12px;"><strong>Auto-Clear:</strong> Badges disappear when action is taken or timeout expires</li>
+                    <li style="padding-left: 12px;"><strong>Respect Attention:</strong> Cap total badges at 5-7, no spam, no fake urgency</li>
+                    <li style="padding-left: 12px;"><strong>Instant Feedback:</strong> Badge state changes immediately after player action</li>
+                </ol>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 60px; padding-top: 40px; border-top: 2px solid #3a3a52; color: #9ca3af;">
+            <p><strong>Reference Games Analyzed:</strong></p>
+            <p style="margin-top: 12px;">
+                <span class="game-reference">Clash Royale</span>
+                <span class="game-reference">Clash of Clans</span>
+                <span class="game-reference">Eternal Evolution</span>
+                <span class="game-reference">Marvel Strike Force</span>
+                <span class="game-reference">Whiteout Survival</span>
+            </p>
+            <p style="margin-top: 24px; font-size: 14px;">
+                Designed for Mobile RPG Hero Collectors • Best Practices from Top-Grossing Games
+            </p>
+        </div>
+    </div>
+</body>
+</html>
